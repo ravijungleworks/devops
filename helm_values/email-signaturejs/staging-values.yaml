@@ -1,0 +1,41 @@
+name: staging-email-signaturejs
+
+namespace: staging-email
+
+env: staging
+asp_env: Staging
+
+image:
+  name: 'internal-registry.outplayhq.com/${ parameters.DOCKER_REPOSITORY_NAME }'
+  pullPolicy: IfNotPresent
+
+replicas: '${ #toInt(parameters.REPLICAS) }'
+app: email
+otlp_endpoint: http://otel-collector.otel:4317
+PYROSCOPE_SERVER_ADDRESS: http://pyroscope.pyroscope:4040
+sentry_env: staging
+
+dsn: https://30bbb7f0e36843de8f3502ccec564567@sentry.outplayhq.com/46
+
+pc_value: 200
+
+nodeSelector: staging-outplay-worker-shared
+
+ingress:
+    type: traefik-staging-internal
+    host: staging-email-signature.outplayhq.com
+
+healthcheck:
+  enabled: false
+  liveness_endpoint: /healthz/ready
+  readiness_endpoint: /healthz/ready
+
+secrets:
+  enabled: false
+resources:
+  limits:
+    cpu: '${ parameters.CPU_LIMIT }'
+    memory: '${ parameters.MEMORY_LIMIT }'
+  requests:
+    cpu: 10m
+    memory: 100Mi
