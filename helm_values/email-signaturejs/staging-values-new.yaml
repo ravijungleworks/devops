@@ -1,0 +1,58 @@
+name: staging-email-verification
+
+namespace: staging-email
+
+env: staging
+asp_env: Staging
+
+image:
+ # name: 'internal-registry.jungleworks.com/${ parameters.DOCKER_REPOSITORY_NAME }'
+  name: outplay-internal-registry-production.jungleworks.com/dev-email-verification:12
+  pullPolicy: IfNotPresent
+
+replicas: '${ #toInt(parameters.REPLICAS) }'
+app: email-verification
+otlp_endpoint: http://otel-collector.otel:4317
+PYROSCOPE_SERVER_ADDRESS: http://pyroscope.pyroscope:4040
+sentry_env: staging
+
+dsn: https://66dd1ecc1d55461aade8773e45e60ccd@sentry.jungleworks.com/43
+
+pc_value: 500
+
+nodeSelector: staging-outplay-worker-shared
+
+ingress:
+    type: traefik-staging-external
+    host: staging-email-verification.jungleworks.com
+
+healthcheck:
+  enabled: true
+  liveness_endpoint: /healthz/ready
+  readiness_endpoint: /healthz/ready
+
+secrets:
+  enabled: false
+resources:
+  limits:
+    cpu: '${ parameters.CPU_LIMIT }'
+    memory: '${ parameters.MEMORY_LIMIT }'
+  requests:
+    cpu: 10m
+    memory: 100Mi
+
+extra_vars:
+  OutPlayEmailLeads__BaseAddress: "https://staging-email-verifier-internal.jungleworks.com"
+  OutPlayEmailValidation__HostAddress: "https://staging-email-verification.jungleworks.com"
+  VERIFYAPI: "https://staging-email-verifier-internal.jungleworks.com"
+  EmailLeads__BaseAddress: "https://staging-email-verifier-internal.jungleworks.com"
+  KafkaPartitionSize: "10"
+  Kafka__ProducerSettings__BootstrapServers: "kafka-kafka-bootstrap.staging-kafka.svc.cluster.local:9092"
+  KafkaUrl: "kafka-kafka-bootstrap.staging-kafka.svc.cluster.local:9092"
+  ConnectionStrings__Redis: "staging-email-redis.redis.svc.cluster.local:6379"
+
+vault_path: staging-email-verification
+
+secret_vars:
+  - ConnectionStrings__EmailVerificationPG
+  - InterChangeToken
