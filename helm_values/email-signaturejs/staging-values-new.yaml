@@ -6,8 +6,8 @@ env: staging
 asp_env: Staging
 
 image:
- # name: 'internal-registry.jungleworks.com/${ parameters.DOCKER_REPOSITORY_NAME }'
-  name: outplay-internal-registry-production.jungleworks.com/dev-email-verification:12
+  name: 'outplay-internal-registry-production.jungleworks.com/${ parameters.DOCKER_REPOSITORY_NAME }'
+ # name: outplay-internal-registry-production.jungleworks.com/dev-email-verification:12
   pullPolicy: IfNotPresent
 
 replicas: '${ #toInt(parameters.REPLICAS) }'
