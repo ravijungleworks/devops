@@ -20,7 +20,7 @@ dsn: https://66dd1ecc1d55461aade8773e45e60ccd@sentry.jungleworks.com/43
 
 pc_value: 500
 
-nodeSelector: staging-outplay-worker-shared
+nodeSelector: worker-shared
 
 ingress:
     type: traefik-staging-external
